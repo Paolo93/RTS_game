@@ -6,9 +6,16 @@ using UnityEngine.AI;
 public class Unit : MonoBehaviour {
 
     const string ANIMATOR_SPEED = "Speed",
-        ANIMATOR_ALIVE = "",
-        ANIMATOR_SHOOT = "";
-        
+        ANIMATOR_ALIVE = "Alive",
+        ANIMATOR_SHOOT = "Shoot";
+
+    [SerializeField]
+    float hp, hpMax = 100;
+
+    public float HealtPercent { get { return hp / hpMax; } }
+    [SerializeField]
+    GameObject hpBarPrefab;
+
     NavMeshAgent nav;
     public Transform target;
     Animator animator;
@@ -17,6 +24,8 @@ public class Unit : MonoBehaviour {
     {
         nav = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        hp = hpMax;
+        Instantiate(hpBarPrefab, transform);
     }
 
 
@@ -31,7 +40,7 @@ public class Unit : MonoBehaviour {
             nav.SetDestination(target.position);
         }
         Animate();
-
+      
     }
 
     protected virtual void Animate ()
@@ -40,6 +49,6 @@ public class Unit : MonoBehaviour {
         speedVector.y = 0;
         float speed = speedVector.magnitude;
         animator.SetFloat(ANIMATOR_SPEED, speed);
-   
+        animator.SetBool(ANIMATOR_ALIVE, hp>0);
     }
 }
