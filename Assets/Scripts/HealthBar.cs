@@ -35,10 +35,11 @@ public class HealthBar : MonoBehaviour {
         }
 
         slider.value = unit.HealtPercent;
+
         transform.position = unit.transform.position + offset;
-        transform.LookAt(cameraTransform);
+        transform.LookAt(cameraTransform);//na co ma patrzec
         var rotation = transform.localEulerAngles;
-        rotation.y = 0;
+        rotation.y = 180;
         transform.localEulerAngles = rotation;
 
     }
