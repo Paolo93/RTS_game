@@ -22,12 +22,20 @@ public class Unit : MonoBehaviour {
     public static List<ISelectable> SelectableUnits { get { return selectableUnits; } }
     static List<ISelectable> selectableUnits = new List<ISelectable>();//Lista obiektow do zaznaczenia
     
-    [SerializeField]
-    float hp, hpMax = 100;
 
-    public float HealtPercent { get { return hp / hpMax; } }
+    [Header("Unit")]
     [SerializeField]
     GameObject hpBarPrefab;
+    [SerializeField]
+    float hp, hpMax = 100;
+    [SerializeField]
+    protected float attackDistance = 1,
+        attackSpeed = 1,
+        stoppingDistance = 1,
+        attackDamage = 0;
+
+    public float HealtPercent { get { return hp / hpMax; } }
+
 
     protected HealthBar healthBar;//soldier bedzie korzystac
 
@@ -123,7 +131,16 @@ public class Unit : MonoBehaviour {
     }
     protected virtual void Attacking()
     {
-        nav.velocity = Vector3.zero;//zerujemy predkosc nav mesha
+        
+        if(target)
+        {
+            nav.velocity = Vector3.zero;//zerujemy predkosc nav mesha
+            transform.LookAt(target);
+        }
+        else
+        {
+            task = Task.idle;
+        }
     }
 
     protected virtual void Animate ()
@@ -135,5 +152,22 @@ public class Unit : MonoBehaviour {
         animator.SetBool(ANIMATOR_ALIVE, hp>0);
     }
 
-    
+    //public ze wzgledu na wywolywanie z zewatrz
+    public virtual void Attack()
+    {
+        animator.SetTrigger(ANIMATOR_SHOOT);
+    }
+
+    public virtual void DealDamage()
+    {
+        if (target)
+        {
+            Unit unit = target.GetComponents<Unit>();
+            if (unit && unit.isAlive)
+            {
+                unit.hp -= attackDamage;
+            }
+        }
+    }
+
 }
